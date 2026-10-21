@@ -254,6 +254,26 @@ body{font-family:'Libre Baskerville',Georgia,serif}
   .rsvp-embed{padding:3px;margin-left:-12px;margin-right:-12px}
   .rsvp-embed iframe{height:870px}
 }
+
+/* Personal wedding stationery RSVP — no embedded Google Forms UI. */
+.rsvp-stationery{max-width:520px;margin:30px auto 0;text-align:left;padding:clamp(24px,5vw,40px);background:#fffcf7;border:1px solid #ddc6ba;box-shadow:0 6px 25px rgba(77,58,47,.06);position:relative}
+.rsvp-stationery:before{content:"";position:absolute;inset:8px;border:1px solid #eadad0;pointer-events:none}
+.rsvp-prelude{text-align:center;font:italic 29px 'Cormorant Garamond',Georgia,serif;color:#966f79;margin:2px 0 5px}
+.rsvp-intro{text-align:center;font:14px/1.8 'Libre Baskerville',serif;color:#74635d;margin:0 auto 27px;max-width:365px}
+#customRSVP label:not(.attending-options label),.attending-options legend{display:block;font:500 11px/1.5 'DM Sans',Arial,sans-serif;letter-spacing:.08em;color:#796358;margin:18px 0 9px}
+#customRSVP input[type=text],#customRSVP input:not([type]),#customRSVP textarea{width:100%;background:#fff;border:1px solid #d7c2b9;padding:13px 14px;color:#584943;font:14px/1.55 'Libre Baskerville',Georgia,serif;border-radius:2px;box-sizing:border-box}
+#customRSVP textarea{resize:vertical}
+#customRSVP input:focus-visible,#customRSVP textarea:focus-visible{outline:2px solid #b97c88;outline-offset:2px}
+.attending-options{border:0;padding:0;margin:15px 0 18px;min-width:0}
+.attending-options legend{margin-bottom:10px}
+.attending-options label{display:flex;align-items:center;gap:9px;padding:10px 0;font:14px 'Libre Baskerville',Georgia,serif;color:#6d5550;cursor:pointer}
+.attending-options input{accent-color:#98707c;width:17px;height:17px;margin:0}
+#customRSVP small{font-weight:400;letter-spacing:0;color:#a18c81}
+#customRSVP .cta{width:100%;margin-top:24px}
+#customRSVP .cta:disabled{opacity:.55;cursor:wait}
+#rsvpStatus{text-align:center;min-height:19px;margin-top:13px}
+.rsvp-trap{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden}
+#rsvpTransport{display:none}
 </style>
 </head>
 <body class="locked">
@@ -284,14 +304,28 @@ body{font-family:'Libre Baskerville',Georgia,serif}
   <p class="section-index">Con nuestros seres queridos</p>
   <h2>Small Gathering, Great Love</h2>
   <p class="rsvp-text">We are celebrating in the company of just five dear guests. Your presence will make our intimate day all the more meaningful.</p>
-  <p class="rsvp-note" style="margin:25px auto;max-width:480px">Kindly let us know if you will be joining us. You can respond below, right here in our invitation.</p>
-  <div class="rsvp-embed">
-    <iframe
-      title="Ashly and Elkhan wedding RSVP — Google Form"
-      src="https://docs.google.com/forms/d/e/1FAIpQLSelPo5xUiOGSta5MUWayJR5ngkzvU9YyobzGW98cIP1x40CcA/viewform?embedded=true"
-      loading="lazy"
-      referrerpolicy="strict-origin-when-cross-origin">Loading RSVP form…</iframe>
+  <div class="rsvp-stationery">
+    <p class="rsvp-prelude">The honour of your reply</p>
+    <p class="rsvp-intro">Kindly let us know whether you will celebrate with us.</p>
+    <form id="customRSVP" novalidate>
+      <label for="rsvpGuest">Your name <span aria-hidden="true">*</span></label>
+      <input id="rsvpGuest" name="guest" placeholder="Your full name" required maxlength="90" autocomplete="name">
+      <fieldset class="attending-options">
+        <legend>Will you be joining us? <span aria-hidden="true">*</span></legend>
+        <label><input type="radio" name="attendance" value="Joyfully accepts" required> <span>Joyfully accepts</span></label>
+        <label><input type="radio" name="attendance" value="Regretfully declines"> <span>Regretfully declines</span></label>
+      </fieldset>
+      <label for="rsvpNote">A little note for us <small>(optional)</small></label>
+      <textarea id="rsvpNote" name="message" rows="3" maxlength="400" placeholder="Write us a little message…"></textarea>
+      <div class="rsvp-trap" aria-hidden="true"><label for="rsvpWebsite">Leave empty</label><input id="rsvpWebsite" name="website" tabindex="-1" autocomplete="off"></div>
+      <button class="cta" id="sendRSVP" type="submit">Send our reply</button>
+      <p class="rsvp-note" id="rsvpStatus" role="status" aria-live="polite"></p>
+    </form>
+    <div class="rsvp-setup" id="rsvpSetup" hidden>
+      <p class="rsvp-note">Online replies aren't connected yet. Please contact the couple directly.</p>
+    </div>
   </div>
+  <iframe title="RSVP submission" id="rsvpTransport" name="rsvpTransport" hidden></iframe>
   <p class="small-note">For our nearest and dearest, with all our love.</p>
 </section>
 <footer class="footer"><div class="flourish">❦ ✧ ❦</div><div class="script">Ashly & Elkhan</div><p>Una historia de amor, para siempre.</p><div class="smallcaps">9 · I · MMXXVII</div></footer>
@@ -392,6 +426,60 @@ weddingAudio.addEventListener('error', () => {
 const chapterButtons=document.querySelectorAll('.chapter-btn');chapterButtons.forEach(btn=>btn.addEventListener('click',()=>{const parent=btn.closest('.chapter');const wasOpen=parent.hasAttribute('open');document.querySelectorAll('.chapter').forEach(ch=>{ch.removeAttribute('open');ch.querySelector('button').setAttribute('aria-expanded','false')});if(!wasOpen){parent.setAttribute('open','');btn.setAttribute('aria-expanded','true')}}));
 const target=new Date('2027-01-09T13:00:00+01:00').getTime();function updateCountdown(){let ms=target-Date.now();if(ms<=0){ms=0;document.getElementById('countdown-message').textContent='Our wedding day has arrived!'}const d=Math.floor(ms/86400000);const h=Math.floor(ms/3600000)%24;const m=Math.floor(ms/60000)%60;const s=Math.floor(ms/1000)%60;[['days',d],['hours',h],['minutes',m],['seconds',s]].forEach(([id,n])=>document.getElementById(id).textContent=String(n).padStart(2,'0'))}updateCountdown();setInterval(updateCountdown,1000);
 const reveal=new IntersectionObserver(entries=>entries.forEach(item=>{if(item.isIntersecting){item.target.classList.add('show');reveal.unobserve(item.target)}}),{threshold:.08});document.querySelectorAll('.fade').forEach(el=>reveal.observe(el));
+
+// To activate this native-looking RSVP, paste your deployed Google Apps Script Web App /exec URL below.
+const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwAuQ-Eofe-E6Wa4cYGBC1bmy-fFhKZZra339q8CDw_a7V3K9nq2Mi_1-hPi6dCQreW/exec';
+const rsvpForm = document.getElementById('customRSVP');
+const rsvpStatus = document.getElementById('rsvpStatus');
+const rsvpSend = document.getElementById('sendRSVP');
+const rsvpTransport = document.getElementById('rsvpTransport');
+if(!RSVP_SCRIPT_URL.trim()) {
+  rsvpSend.disabled = true;
+  rsvpSend.textContent = 'RSVP setup pending';
+  rsvpStatus.textContent = 'RSVP submissions are being set up. Please contact the couple directly for now.';
+}
+rsvpForm.addEventListener('submit', event => {
+  event.preventDefault();
+  if(!rsvpForm.reportValidity()) return;
+  if(!RSVP_SCRIPT_URL.trim()) return;
+  if(document.getElementById('rsvpWebsite').value) return;
+  rsvpSend.disabled = true;
+  rsvpSend.textContent = 'Sending…';
+  rsvpStatus.textContent = 'Submitting your reply…';
+  const nonce = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+  const payload = new FormData(rsvpForm);
+  payload.append('nonce', nonce);
+  const hiddenForm = document.createElement('form');
+  hiddenForm.method = 'POST';
+  hiddenForm.action = RSVP_SCRIPT_URL;
+  hiddenForm.target = 'rsvpTransport';
+  hiddenForm.style.display = 'none';
+  for(const [name,value] of payload.entries()) {
+    const input = document.createElement('input');
+    input.type='hidden';input.name=name;input.value=value;
+    hiddenForm.appendChild(input);
+  }
+  document.body.appendChild(hiddenForm);
+  const handler = e => {
+    if(e.source !== rsvpTransport.contentWindow || !e.data || e.data.type !== 'ashly-elkhan-rsvp' || e.data.nonce !== nonce) return;
+    window.removeEventListener('message',handler);
+    clearTimeout(timeout);
+    hiddenForm.remove();
+    rsvpSend.disabled = false;
+    rsvpSend.textContent = 'Send our reply';
+    if(e.data.ok) {rsvpStatus.textContent='Thank you! Your RSVP has been received.';rsvpForm.reset();}
+    else rsvpStatus.textContent='We could not confirm your RSVP. Please try again or contact the couple.';
+  };
+  window.addEventListener('message',handler);
+  const timeout = setTimeout(() => {
+    window.removeEventListener('message',handler);
+    hiddenForm.remove();
+    rsvpSend.disabled=false;
+    rsvpSend.textContent='Send our reply';
+    rsvpStatus.textContent='We could not confirm delivery. Please ask the couple to check the response sheet before trying again.';
+  },20000);
+  hiddenForm.submit();
+});
 </script>
 </body>
 </html>
