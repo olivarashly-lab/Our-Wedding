@@ -222,6 +222,38 @@ body{font-family:'Libre Baskerville',Georgia,serif}
 }
 .envelope:hover:not(:disabled){transform:translateY(-2px)}
 
+
+/* Keep the wax-sealed envelope centered at any screen size. */
+.entry{display:flex;align-items:center;justify-content:center;min-height:100dvh;min-height:100vh}
+.entry .envelope-area{width:min(510px,100%);margin-inline:auto;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.entry .envelope{display:block;margin-inline:auto;flex:none;max-width:100%}
+.entry .entry-label,.entry .entry-hint,.entry .entry-sub{max-width:100%;text-align:center}
+/* Accessible linked RSVP styled to match the existing dusty rose button. */
+.rsvp .cta{text-decoration:none;line-height:1.5;max-width:100%;display:inline-block}
+.rsvp .cta:focus-visible{outline:3px solid var(--rose);outline-offset:4px}
+
+/* Embedded private RSVP: the page stays on the invitation. */
+.rsvp-embed{
+  max-width:680px;
+  margin:22px auto 0;
+  padding:8px;
+  border:1px solid rgba(148,116,92,.3);
+  background:#fffaf3;
+  box-shadow:0 9px 28px rgba(95,68,62,.065);
+  border-radius:9px;
+}
+.rsvp-embed iframe{
+  display:block;
+  width:100%;
+  height:790px;
+  border:0;
+  background:#fffaf3;
+  border-radius:5px;
+}
+@media(max-width:630px){
+  .rsvp-embed{padding:3px;margin-left:-12px;margin-right:-12px}
+  .rsvp-embed iframe{height:870px}
+}
 </style>
 </head>
 <body class="locked">
@@ -252,33 +284,17 @@ body{font-family:'Libre Baskerville',Georgia,serif}
   <p class="section-index">Con nuestros seres queridos</p>
   <h2>Small Gathering, Great Love</h2>
   <p class="rsvp-text">We are celebrating in the company of just five dear guests. Your presence will make our intimate day all the more meaningful.</p>
-  <button class="cta" id="rsvpToggle" type="button" aria-expanded="false" aria-controls="rsvpForm">Respond to our invitation</button>
-  <div class="rsvp-options" id="rsvpForm">
-    <p class="rsvp-note">We would love to hear from you. Please let us know whether you can celebrate with us.</p>
-    <form id="guestRsvp" novalidate>
-      <label for="guest">Your name <span aria-hidden="true">*</span></label>
-      <input id="guest" name="name" required maxlength="100" placeholder="Your full name" autocomplete="name">
-      <label for="guestEmail">Email (optional)</label>
-      <input id="guestEmail" name="email" type="email" maxlength="150" placeholder="To let us reply to you" autocomplete="email">
-      <label for="attend">Will you join us? <span aria-hidden="true">*</span></label>
-      <select id="attend" name="attendance" required>
-        <option value="Joyfully accepts">Joyfully accepts</option>
-        <option value="Regretfully declines">Regretfully declines</option>
-      </select>
-      <label for="note">A little note (optional)</label>
-      <textarea id="note" name="message" rows="3" maxlength="400" placeholder="Your message to us..."></textarea>
-      <div class="rsvp-trap" aria-hidden="true"><label for="rsvpWebsite">Leave this blank</label><input id="rsvpWebsite" name="_honey" tabindex="-1" autocomplete="off"></div>
-      <button class="cta" id="sendRSVP" type="submit">Send my RSVP</button>
-      <p class="rsvp-note" id="rsvpStatus" role="status" aria-live="polite"></p>
-    </form>
-    <div class="rsvp-backup" id="rsvpBackup" hidden>
-      <p class="rsvp-note">If sending is unavailable, you can copy your reply and send it directly to us.</p>
-      <button class="action" id="copyRSVP" type="button">Copy RSVP message</button>
-    </div>
+  <p class="rsvp-note" style="margin:25px auto;max-width:480px">Kindly let us know if you will be joining us. You can respond below, right here in our invitation.</p>
+  <div class="rsvp-embed">
+    <iframe
+      title="Ashly and Elkhan wedding RSVP — Google Form"
+      src="https://docs.google.com/forms/d/e/1FAIpQLSelPo5xUiOGSta5MUWayJR5ngkzvU9YyobzGW98cIP1x40CcA/viewform?embedded=true"
+      loading="lazy"
+      referrerpolicy="strict-origin-when-cross-origin">Loading RSVP form…</iframe>
   </div>
   <p class="small-note">For our nearest and dearest, with all our love.</p>
 </section>
-<footer class="footer"><div class="flourish">❦ ✧ ❦</div><div class="script">Ashly & Elkhan</div><p>Una historia de amor, para siempre.</p><div class="smallcaps">IX · I · MMXXVII</div></footer>
+<footer class="footer"><div class="flourish">❦ ✧ ❦</div><div class="script">Ashly & Elkhan</div><p>Una historia de amor, para siempre.</p><div class="smallcaps">9 · I · MMXXVII</div></footer>
 </main>
 <aside class="music-dock" id="musicDock" hidden aria-label="Wedding music">
   <button type="button" class="music-dock-toggle" id="musicToggle" aria-controls="musicPanel" aria-expanded="false">
@@ -376,88 +392,6 @@ weddingAudio.addEventListener('error', () => {
 const chapterButtons=document.querySelectorAll('.chapter-btn');chapterButtons.forEach(btn=>btn.addEventListener('click',()=>{const parent=btn.closest('.chapter');const wasOpen=parent.hasAttribute('open');document.querySelectorAll('.chapter').forEach(ch=>{ch.removeAttribute('open');ch.querySelector('button').setAttribute('aria-expanded','false')});if(!wasOpen){parent.setAttribute('open','');btn.setAttribute('aria-expanded','true')}}));
 const target=new Date('2027-01-09T13:00:00+01:00').getTime();function updateCountdown(){let ms=target-Date.now();if(ms<=0){ms=0;document.getElementById('countdown-message').textContent='Our wedding day has arrived!'}const d=Math.floor(ms/86400000);const h=Math.floor(ms/3600000)%24;const m=Math.floor(ms/60000)%60;const s=Math.floor(ms/1000)%60;[['days',d],['hours',h],['minutes',m],['seconds',s]].forEach(([id,n])=>document.getElementById(id).textContent=String(n).padStart(2,'0'))}updateCountdown();setInterval(updateCountdown,1000);
 const reveal=new IntersectionObserver(entries=>entries.forEach(item=>{if(item.isIntersecting){item.target.classList.add('show');reveal.unobserve(item.target)}}),{threshold:.08});document.querySelectorAll('.fade').forEach(el=>reveal.observe(el));
-// RSVP DELIVERY SETUP: replace the email below with the email that should receive replies.
-// On first use, FormSubmit emails that address a confirmation link; activate it before sharing.
-// An email address in client-side website source is public.
-const RSVP_RECEIVER_EMAIL = 'olivarashly@gmail.com';
-const toggle=document.getElementById('rsvpToggle');
-const form=document.getElementById('rsvpForm');
-const guestRsvp=document.getElementById('guestRsvp');
-const rsvpStatus=document.getElementById('rsvpStatus');
-const sendRSVP=document.getElementById('sendRSVP');
-const rsvpBackup=document.getElementById('rsvpBackup');
-const configured=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(RSVP_RECEIVER_EMAIL) && !RSVP_RECEIVER_EMAIL.includes('YOUR_EMAIL');
-function rsvpMessage(){
-  const name=document.getElementById('guest').value.trim();
-  const email=document.getElementById('guestEmail').value.trim();
-  const attendance=document.getElementById('attend').value;
-  const note=document.getElementById('note').value.trim();
-  return `Wedding RSVP — Ashly & Elkhan, January 9, 2027\nName: ${name}\nEmail: ${email||'Not provided'}\nAttendance: ${attendance}\nMessage: ${note||'None'}`;
-}
-toggle.addEventListener('click',()=>{
-  const open=form.classList.toggle('visible');
-  toggle.setAttribute('aria-expanded',String(open));
-  if(open)document.getElementById('guest').focus();
-});
-if (!configured) {
-  sendRSVP.disabled=true;
-  sendRSVP.textContent='RSVP not connected yet';
-  rsvpStatus.textContent='The couple needs to connect an RSVP receiving email before this form can send responses.';
-  rsvpBackup.hidden=false;
-}
-guestRsvp.addEventListener('submit', async event=>{
-  event.preventDefault();
-  if(!guestRsvp.reportValidity())return;
-  if(!configured){rsvpBackup.hidden=false;return;}
-  if(document.getElementById('rsvpWebsite').value)return;
-  sendRSVP.disabled=true;
-  sendRSVP.textContent='Sending…';
-  rsvpStatus.textContent='Sending your reply…';
-  rsvpBackup.hidden=true;
-  const payload={
-    _subject:'Wedding RSVP — Ashly & Elkhan',
-    _honey:'',
-    name:document.getElementById('guest').value.trim(),
-    email:document.getElementById('guestEmail').value.trim(),
-    attendance:document.getElementById('attend').value,
-    message:document.getElementById('note').value.trim()||'None',
-    wedding_date:'January 9, 2027'
-  };
-  try {
-    const response=await fetch('https://formsubmit.co/ajax/'+encodeURIComponent(RSVP_RECEIVER_EMAIL),{
-      method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify(payload)
-    });
-    const result=await response.json();
-    if(!response.ok || !(result.success===true || result.success==='true')) {
-      throw new Error(result.message || 'Delivery could not be confirmed.');
-    }
-    rsvpStatus.textContent='Thank you! Your RSVP has been submitted. We look forward to celebrating with you.';
-    guestRsvp.reset();
-  } catch(err) {
-    rsvpStatus.textContent='We could not confirm delivery. '+(err.message||'Please try again.')+' You can copy your reply below.';
-    rsvpBackup.hidden=false;
-  } finally {
-    sendRSVP.disabled=false;
-    sendRSVP.textContent='Send my RSVP';
-  }
-});
-document.getElementById('copyRSVP').addEventListener('click',async()=>{
-  if(!document.getElementById('guest').value.trim()){
-    rsvpStatus.textContent='Please enter your name before copying your RSVP.';
-    document.getElementById('guest').focus();return;
-  }
-  const message=rsvpMessage();
-  try{
-    await navigator.clipboard.writeText(message);
-    rsvpStatus.textContent='RSVP copied. Please paste it into an email or message and send it to Ashly or Elkhan.';
-  }catch(error){
-    let out=document.getElementById('rsvpCopyText');
-    if(!out){out=document.createElement('textarea');out.id='rsvpCopyText';out.readOnly=true;out.rows=6;rsvpBackup.appendChild(out);}
-    out.value=message;out.select();
-    rsvpStatus.textContent='Select and copy the message shown below, then send it to Ashly or Elkhan.';
-  }
-});
 </script>
 </body>
 </html>
