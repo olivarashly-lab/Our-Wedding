@@ -31,36 +31,6 @@ body{font-family:'Libre Baskerville',Georgia,serif}
 .footer .script{letter-spacing:.015em}
 @media(max-width:630px){.names{font-size:clamp(58px,14vw,75px)}.invitation-text,.intro-copy,.story-intro,.chapter-body,.event p,.motif-text,.rsvp-text{font-size:15px;line-height:1.8}}
 
-/* Satin ribbon opening — replaces the original wax-seal interaction */
-.ribbon-area{text-align:center;width:min(520px,96vw)}
-.ribbon-card{display:block;isolation:isolate;width:min(410px,86vw);aspect-ratio:1.24;position:relative;margin:auto;padding:0;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 17px 22px rgba(90,60,50,.18));-webkit-tap-highlight-color:transparent;transition:transform .45s ease,filter .5s ease}
-.ribbon-card:hover:not(:disabled){transform:translateY(-4px)}
-.ribbon-card:focus-visible{outline:3px solid var(--rose);outline-offset:8px}
-.stationery{position:absolute;inset:0;overflow:hidden;background:linear-gradient(145deg,#fffdf9,#f8f1e7);border:1px solid #c6aa92;border-radius:3px;box-shadow:inset 0 0 0 8px #fbf7f0,inset 0 0 0 9px #d8bfa8;display:grid;place-items:center}
-.stationery-inner{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 20px;text-align:center}
-.stationery-ornament{font:26px Georgia,serif;color:#ac8a75}
-.stationery-kicker,.stationery-date{font:500 10px/1.7 'DM Sans',sans-serif;letter-spacing:.23em;color:#94745c}
-.stationery-names{font:500 clamp(29px,6vw,45px)/1.1 'Cormorant Garamond',Georgia,serif;color:#8d6370}
-.stationery-names i{font-weight:400;color:#ad9180}
-.stationery-date{font-size:9px;letter-spacing:.16em}
-.ribbon-band{position:absolute;z-index:2;background:linear-gradient(90deg,#a86e7d 0%,#d9aab3 20%,#b97c88 50%,#e0b6bd 77%,#ae7381 100%);box-shadow:0 2px 5px #65434c38;pointer-events:none}
-.ribbon-band-h{left:-1%;right:-1%;top:50%;height:29px;transform:translateY(-50%);transition:transform 1s cubic-bezier(.25,.7,.2,1),opacity .8s ease}
-.ribbon-band-v{top:-1%;bottom:-1%;left:50%;width:29px;transform:translateX(-50%);background:linear-gradient(90deg,#aa707d,#dbafb9 28%,#c18996 65%,#a96f7d);transition:transform 1s cubic-bezier(.25,.7,.2,1),opacity .8s ease}
-.ribbon-bow{position:absolute;z-index:4;left:50%;top:50%;width:150px;height:130px;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 4px #6d48534a);transition:transform .9s cubic-bezier(.3,.6,.2,1),opacity .65s ease;pointer-events:none}
-.bow-loop{position:absolute;top:23px;width:69px;height:52px;background:linear-gradient(130deg,#eac4c9 2%,#b77787 47%,#d9a3ad 85%);border:1px solid #ab7280;border-radius:70% 26% 70% 35%;box-shadow:inset 6px 2px 12px #fff4, inset -5px -4px 7px #86505f35}
-.loop-left{left:8px;transform:rotate(18deg)}.loop-right{right:8px;transform:scaleX(-1) rotate(18deg)}
-.bow-tail{position:absolute;top:57px;width:28px;height:69px;background:linear-gradient(90deg,#ae7180,#e0b2bd 42%,#bc8190);clip-path:polygon(0 0,100% 0,100% 100%,50% 83%,0 100%)}
-.tail-left{left:50px;transform:rotate(26deg);transform-origin:top}.tail-right{right:49px;transform:rotate(-27deg);transform-origin:top}
-.bow-knot{position:absolute;left:50%;top:52px;width:35px;height:29px;transform:translateX(-50%);border-radius:43%;background:linear-gradient(120deg,#a56b7a,#e0b3bc 42%,#a96e7c);box-shadow:inset 0 2px 5px #ffffff6e,0 2px 4px #65434c55}
-.ribbon-card.untying .ribbon-bow{transform:translate(-50%,-140%) rotate(-12deg) scale(.75);opacity:0}
-.ribbon-card.untying .ribbon-band-h{transform:translateY(-50%) scaleX(.01);opacity:0}
-.ribbon-card.untying .ribbon-band-v{transform:translateX(-50%) scaleY(.01);opacity:0}
-.ribbon-card.untying{transform:scale(1.035);filter:drop-shadow(0 20px 26px rgba(90,60,50,.1))}
-.ribbon-card.untying .stationery{animation:cardReveal 1.3s ease forwards}
-@keyframes cardReveal{0%{filter:brightness(.95)}70%{filter:brightness(1.04)}100%{filter:brightness(1)}}
-@media(max-width:430px){.stationery-inner{gap:8px;padding:17px}.stationery-names{font-size:31px}.stationery-date{font-size:8px}.ribbon-bow{transform:translate(-50%,-50%) scale(.85)}.ribbon-card.untying .ribbon-bow{transform:translate(-50%,-140%) rotate(-12deg) scale(.65)}}
-@media(prefers-reduced-motion:reduce){.ribbon-card,.ribbon-band,.ribbon-bow{transition:none!important}.ribbon-card.untying .stationery{animation:none}}
-
 /* Wedding music control for a locally hosted audio file. */
 .music-dock[hidden]{display:none!important}
 .music-dock{position:fixed;z-index:80;right:clamp(12px,3vw,28px);bottom:clamp(12px,3vw,28px);width:min(355px,calc(100vw - 24px));font-family:'DM Sans',Arial,sans-serif}
@@ -164,7 +134,7 @@ body{font-family:'Libre Baskerville',Georgia,serif}
 </main>
 <aside class="music-dock" id="musicDock" hidden aria-label="Wedding music">
   <button type="button" class="music-dock-toggle" id="musicToggle" aria-controls="musicPanel" aria-expanded="false">
-    <span><span class="music-glyph" aria-hidden="true">♫</span> <span id="musicButtonText">Play our song</span></span><span id="musicChevron" aria-hidden="true">−</span>
+    <span><span class="music-glyph" aria-hidden="true">♫</span> <span id="musicButtonText">Our song · You and Me</span></span><span id="musicChevron" aria-hidden="true">−</span>
   </button>
   <div class="music-panel" id="musicPanel">
     <h2 class="music-panel-title">Our song · You and Me</h2>
@@ -174,61 +144,87 @@ body{font-family:'Libre Baskerville',Georgia,serif}
       <label for="musicVolume" class="music-volume-label">Volume</label>
       <input id="musicVolume" aria-label="Music volume" type="range" min="0" max="100" value="55">
     </div>
-    <p class="music-panel-credit" id="musicStatus" role="status" aria-live="polite">Open the envelope to start the music. If it does not start, tap Play music.</p>
+    <p class="music-panel-credit" id="musicStatus" role="status" aria-live="polite">Tap the wax seal to begin. If music does not start, press Play music.</p>
   </div>
 </aside>
-<audio id="weddingAudio" preload="auto" loop><source src="./you-and-me.mp3" type="audio/mpeg"></audio>
+<audio id="weddingAudio" preload="auto" loop src="./you-and-me.mp3"></audio>
 
 <script>
-const entry=document.getElementById('entry');
-const envelope=document.getElementById('envelope');
-envelope.addEventListener('click',()=>{
-  const song=document.getElementById('weddingAudio');
-  if(song){song.volume=.55;document.getElementById('musicVolume').value='55';song.play().then(()=>syncMusicUI()).catch(()=>{syncMusicUI();document.getElementById('musicStatus').textContent='Your browser stopped automatic playback. Tap Play music below.';});}
+// Music file must be named exactly "you-and-me.mp3" and sit beside index.html.
+const entry = document.getElementById('entry');
+const envelope = document.getElementById('envelope');
+const musicDock = document.getElementById('musicDock');
+const musicToggle = document.getElementById('musicToggle');
+const weddingAudio = document.getElementById('weddingAudio');
+const musicPlayPause = document.getElementById('musicPlayPause');
+const musicStatus = document.getElementById('musicStatus');
+const musicVolume = document.getElementById('musicVolume');
+weddingAudio.volume = 0.55;
+
+function musicErrorMessage() {
+  if (weddingAudio.error && weddingAudio.error.code === 4) {
+    return 'Audio format not supported or song unavailable. Check that you-and-me.mp3 is a playable MP3 file.';
+  }
+  return 'Could not load the song. Check that you-and-me.mp3 is in the same folder as index.html and that the filename matches exactly.';
+}
+function syncMusicUI() {
+  const playing = !weddingAudio.paused && !weddingAudio.ended;
+  musicPlayPause.textContent = playing ? 'Pause music' : 'Play music';
+  musicPlayPause.setAttribute('aria-label', playing ? 'Pause wedding music' : 'Play wedding music');
+  if (playing) musicStatus.textContent = 'Now playing · You and Me — Lifehouse';
+}
+async function startMusic() {
+  try {
+    await weddingAudio.play();
+    syncMusicUI();
+  } catch (error) {
+    syncMusicUI();
+    musicStatus.textContent = weddingAudio.error ? musicErrorMessage() :
+      'Music was not started. Please tap Play music. If it still does not play, check your device volume and MP3 URL.';
+  }
+}
+
+envelope.addEventListener('click', () => {
+  // Start playback directly within the guest's click (browser gesture requirement).
+  void startMusic();
   envelope.classList.add('open');
-  envelope.disabled=true;
-  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const delay=reducedMotion?100:1050;
-  setTimeout(()=>{
+  envelope.disabled = true;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(() => {
     entry.classList.add('gone');
     document.body.classList.remove('locked');
-    const musicDock=document.getElementById('musicDock');
-    if(musicDock){musicDock.hidden=false;musicDock.classList.add('expanded');
-      const toggle=document.getElementById('musicToggle');
-      if(toggle)toggle.setAttribute('aria-expanded','true');
-    }
-  },delay);
-  setTimeout(()=>entry.remove(),reducedMotion?700:2100);
+    musicDock.hidden = false;
+    musicDock.classList.add('expanded');
+    musicToggle.setAttribute('aria-expanded', 'true');
+  }, reducedMotion ? 100 : 1050);
+  setTimeout(() => entry.remove(), reducedMotion ? 700 : 2100);
 });
-const musicToggle=document.getElementById('musicToggle');
-const musicDock=document.getElementById('musicDock');
-const weddingAudio=document.getElementById('weddingAudio');
-const musicPlayPause=document.getElementById('musicPlayPause');
-const musicStatus=document.getElementById('musicStatus');
-function syncMusicUI(){
-  const playing=!weddingAudio.paused;
-  musicPlayPause.textContent=playing?'Pause music':'Play music';
-  document.getElementById('musicButtonText').textContent=playing?'Pause our song':'Play our song';
-  if(playing) musicStatus.textContent='Now playing · You and Me — Lifehouse';
-  else if(!musicStatus.dataset.error) musicStatus.textContent='Music is stopped. Tap Play music to listen.';
-}
-musicToggle.addEventListener('click',()=>{
-  const expanded=musicDock.classList.toggle('expanded');
-  musicToggle.setAttribute('aria-expanded',String(expanded));
-  document.getElementById('musicChevron').textContent=expanded?'−':'+';
+
+musicToggle.addEventListener('click', () => {
+  const expanded = musicDock.classList.toggle('expanded');
+  musicToggle.setAttribute('aria-expanded', String(expanded));
+  document.getElementById('musicChevron').textContent = expanded ? '−' : '+';
 });
-musicPlayPause.addEventListener('click',async()=>{
-  if(weddingAudio.paused){
-    try{await weddingAudio.play();syncMusicUI();}
-    catch(e){musicStatus.dataset.error='1';musicStatus.textContent='Cannot play audio. Check that you-and-me.mp3 and index.html are in the same folder, then refresh.';}
-  }else{weddingAudio.pause();syncMusicUI();}
+musicPlayPause.addEventListener('click', () => {
+  if (weddingAudio.paused) void startMusic();
+  else {
+    weddingAudio.pause();
+    musicStatus.textContent = 'Music paused · Press Play music to resume.';
+    syncMusicUI();
+  }
 });
-document.getElementById('musicVolume').addEventListener('input',e=>{weddingAudio.volume=Number(e.target.value)/100;});
-weddingAudio.addEventListener('ended',syncMusicUI);
-weddingAudio.addEventListener('pause',syncMusicUI);
-weddingAudio.addEventListener('play',syncMusicUI);
-weddingAudio.addEventListener('error',()=>{musicStatus.dataset.error='1';musicStatus.textContent='Song not found or cannot be loaded. Place you-and-me.mp3 beside index.html and reload.';});
-weddingAudio.addEventListener('playing',()=>{delete musicStatus.dataset.error;syncMusicUI();});
+musicVolume.addEventListener('input', () => {
+  weddingAudio.volume = Number(musicVolume.value) / 100;
+  weddingAudio.muted = false;
+});
+weddingAudio.addEventListener('play', syncMusicUI);
+weddingAudio.addEventListener('playing', syncMusicUI);
+weddingAudio.addEventListener('pause', syncMusicUI);
+weddingAudio.addEventListener('error', () => {
+  musicStatus.textContent = musicErrorMessage();
+  syncMusicUI();
+});
+
 const chapterButtons=document.querySelectorAll('.chapter-btn');chapterButtons.forEach(btn=>btn.addEventListener('click',()=>{const parent=btn.closest('.chapter');const wasOpen=parent.hasAttribute('open');document.querySelectorAll('.chapter').forEach(ch=>{ch.removeAttribute('open');ch.querySelector('button').setAttribute('aria-expanded','false')});if(!wasOpen){parent.setAttribute('open','');btn.setAttribute('aria-expanded','true')}}));
 const target=new Date('2027-01-09T13:00:00+01:00').getTime();function updateCountdown(){let ms=target-Date.now();if(ms<=0){ms=0;document.getElementById('countdown-message').textContent='Our wedding day has arrived!'}const d=Math.floor(ms/86400000);const h=Math.floor(ms/3600000)%24;const m=Math.floor(ms/60000)%60;const s=Math.floor(ms/1000)%60;[['days',d],['hours',h],['minutes',m],['seconds',s]].forEach(([id,n])=>document.getElementById(id).textContent=String(n).padStart(2,'0'))}updateCountdown();setInterval(updateCountdown,1000);
 const reveal=new IntersectionObserver(entries=>entries.forEach(item=>{if(item.isIntersecting){item.target.classList.add('show');reveal.unobserve(item.target)}}),{threshold:.08});document.querySelectorAll('.fade').forEach(el=>reveal.observe(el));
