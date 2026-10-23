@@ -428,7 +428,7 @@ const target=new Date('2027-01-09T13:00:00+01:00').getTime();function updateCoun
 const reveal=new IntersectionObserver(entries=>entries.forEach(item=>{if(item.isIntersecting){item.target.classList.add('show');reveal.unobserve(item.target)}}),{threshold:.08});document.querySelectorAll('.fade').forEach(el=>reveal.observe(el));
 
 // To activate this native-looking RSVP, paste your deployed Google Apps Script Web App /exec URL below.
-const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwr_en6hzr8oWSMunnBiQ3vIY_q9_Hlma1DL0w-NReV3trgbcQco7TUPWS1UByxoQZI/exec';
+const RSVP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPbd0ZRYGxYIFozEILaWiSV5zanctRU9WXl4BXb-3fi5JvyAA1oXKJTfNEKGhMf5eN/exec';
 const rsvpForm = document.getElementById('customRSVP');
 const rsvpStatus = document.getElementById('rsvpStatus');
 const rsvpSend = document.getElementById('sendRSVP');
