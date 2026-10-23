@@ -286,6 +286,41 @@ body{font-family:'Libre Baskerville',Georgia,serif}
 .blessing .blessing-preview{display:block;font:11px/1.6 'DM Sans',Arial,sans-serif;color:#927d73;margin-top:8px}
 /* Text-only Messenger request button */
 .blessing .blessing-action{width:auto;min-width:0;height:auto;min-height:44px;padding:13px 22px;border-radius:3px;font:500 11px 'DM Sans',Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;line-height:1.5;text-decoration:none;cursor:pointer}.blessing .blessing-action:hover,.blessing .blessing-action:focus-visible{background:#865d69;color:#fff}
+
+/* English - Russian language switcher */
+.language-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #98707c;
+  white-space: nowrap;
+}
+
+.language-switch a {
+  color: inherit;
+  text-decoration: none;
+  padding: 6px;
+}
+
+.language-switch a:hover,
+.language-switch a[aria-current="page"] {
+  color: #6f4b58;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 630px) {
+  .topnav {
+    flex-wrap: wrap;
+  }
+
+  .language-switch {
+    margin-left: auto;
+  }
+}
 </style>
 </head>
 <body class="locked">
@@ -297,7 +332,22 @@ body{font-family:'Libre Baskerville',Georgia,serif}
   </div>
 </div>
 <main class="page" id="main">
-<nav class="topnav"><span class="brand">A & E</span><div class="navlinks"><a href="#story">Our Story</a><a href="#details">The Day</a><a href="#rsvp">RSVP</a></div></nav>
+<nav class="topnav">
+  <span class="brand">A & E</span>
+
+  <div class="navlinks">
+    <a href="#story">Our Story</a>
+    <a href="#details">The Day</a>
+    <a href="#rsvp">RSVP</a>
+  </div>
+
+  <div class="language-switch" aria-label="Choose language">
+    <a href="./index.html" lang="en" aria-current="page">EN</a>
+    <span aria-hidden="true">|</span>
+    <a href="./russian.html" lang="ru">RU</a>
+  </div>
+
+</nav>
 <header class="hero"><div class="petals" aria-hidden="true"><span class="petal" style="--left:9%;--duration:19s;--delay:-7s"></span><span class="petal" style="--left:26%;--duration:14s;--delay:-3s"></span><span class="petal" style="--left:75%;--duration:17s;--delay:-11s"></span><span class="petal" style="--left:88%;--duration:23s;--delay:-5s"></span><span class="petal" style="--left:57%;--duration:20s;--delay:-8s"></span></div>
 <div class="frame fade"><div class="ornament" aria-hidden="true">❦ ✦ ❦</div><p class="hero-kicker">Con amor · With love</p><h1 class="names">Ashly<span>&</span>Elkhan</h1><div class="rule">✧</div><p class="invitation-text">Together with joyful hearts, we invite you to witness the beginning of our forever.</p><p class="date-feature">Saturday · 9 January 2027</p><p class="hero-bottom">Warsaw · Poland</p></div><a class="down" href="#welcome">Discover our story ↓</a></header>
 <section class="content-section fade" id="welcome"><p class="section-index">Una celebración íntima</p><h2>A celebration of love</h2><p class="intro-copy">Not every great love story begins with a grand gesture. Sometimes, it starts with a message, a cup of coffee, and two people willing to cross oceans for each other.</p><div class="rule">✧</div><p class="subheading">From one little hello to a lifetime together.</p></section>
