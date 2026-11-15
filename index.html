@@ -1701,6 +1701,30 @@ section.content-section {padding:90px clamp(25px,7vw,90px);}
  }
 }
 
+
+/* Bilingual RSVP: engraved-style acknowledgement is shown ONLY after verified Apps Script success. */
+.rsvp-confirmation[hidden]{display:none!important}
+.rsvp-confirmation{
+  position:relative;
+  max-width:510px;
+  margin:20px auto 9px;
+  padding:48px clamp(24px,5vw,46px) 44px;
+  border:1px solid rgba(159,121,110,.42);
+  border-radius:3px;
+  text-align:center;
+  background:linear-gradient(160deg,rgba(255,253,248,.93),rgba(249,239,231,.91));
+  box-shadow:0 13px 35px rgba(88,63,54,.085),inset 0 1px 0 rgba(255,255,255,.78);
+  animation:rsvpPaperReveal .8s cubic-bezier(.2,.8,.2,1) both;
+}
+.rsvp-confirmation::before{content:"";position:absolute;inset:9px;border:1px solid rgba(191,155,143,.35);pointer-events:none}
+.rsvp-confirmation .rsvp-confirmation-symbol{width:56px;height:56px;margin:0 auto 19px;display:grid;place-items:center;border-radius:50%;border:1px solid #c59fa6;color:#926775;font:31px 'Cormorant Garamond',Georgia,serif}
+.rsvp-confirmation .rsvp-confirmation-kicker{font:500 10px/1.8 'DM Sans',Arial,sans-serif;letter-spacing:.25em;text-transform:uppercase;color:#a37b84;margin:0 0 11px}
+.rsvp-confirmation h3{font:500 clamp(32px,6vw,43px)/1.1 'Cormorant Garamond',Georgia,serif;color:#855f6a;margin:0 auto 18px}
+.rsvp-confirmation .rsvp-confirmation-message{font:clamp(15px,2.3vw,17px)/1.85 'Libre Baskerville',Georgia,serif;color:#65534c;max-width:350px;margin:0 auto 17px}
+.rsvp-confirmation .rsvp-confirmation-signature{font:italic 25px 'Cormorant Garamond',Georgia,serif;color:#9b7580;margin:19px 0 0}
+@keyframes rsvpPaperReveal{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.rsvp-confirmation{animation:none}}
+
 </style>
 </head>
 <body class="locked">
@@ -1762,6 +1786,13 @@ section.content-section {padding:90px clamp(25px,7vw,90px);}
       <button class="cta" id="sendRSVP" type="submit">Send our reply</button>
       <p class="rsvp-note" id="rsvpStatus" role="status" aria-live="polite"></p>
     </form>
+    <div class="rsvp-confirmation" id="rsvpConfirmation" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden>
+      <div class="rsvp-confirmation-symbol" aria-hidden="true">✓</div>
+      <p class="rsvp-confirmation-kicker" id="rsvpConfirmKicker">A note from us</p>
+      <h3 id="rsvpConfirmTitle">With Love, We Received Your Reply</h3>
+      <p class="rsvp-confirmation-message" id="rsvpConfirmMessage">Thank you for responding to our invitation. Your reply has been received.</p>
+      <p class="rsvp-confirmation-signature" id="rsvpConfirmSignature">With love, Ashly &amp; Elkhan</p>
+    </div>
     <div class="rsvp-setup" id="rsvpSetup" hidden>
       <p class="rsvp-note">Online replies aren't connected yet. Please contact the couple directly.</p>
     </div>
@@ -1904,6 +1935,41 @@ const rsvpForm = document.getElementById('customRSVP');
 const rsvpStatus = document.getElementById('rsvpStatus');
 const rsvpSend = document.getElementById('sendRSVP');
 const rsvpTransport = document.getElementById('rsvpTransport');
+
+const rsvpConfirmation = document.getElementById('rsvpConfirmation');
+const rsvpConfirmationCopy = {
+  en: {kicker:'A note from us',title:'With Love, We Received Your Reply',message:'Thank you for responding to our invitation. Your reply has been received.',signature:'With love, Ashly & Elkhan'},
+  ru: {kicker:'От нас с любовью',title:'Мы получили ваш ответ',message:'Спасибо, что ответили на наше приглашение. Ваш ответ успешно получен.',signature:'С любовью, Эшли и Эльхан'}
+};
+function updateRSVPConfirmationLanguage() {
+  const lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
+  const copy = rsvpConfirmationCopy[lang];
+  document.getElementById('rsvpConfirmKicker').textContent=copy.kicker;
+  document.getElementById('rsvpConfirmTitle').textContent=copy.title;
+  document.getElementById('rsvpConfirmMessage').textContent=copy.message;
+  document.getElementById('rsvpConfirmSignature').textContent=copy.signature;
+}
+// The EN/RU switch already updates the html lang attribute. Keep acknowledgements in sync.
+new MutationObserver(updateRSVPConfirmationLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+updateRSVPConfirmationLanguage();
+function showVerifiedRSVPConfirmation() {
+  updateRSVPConfirmationLanguage();
+  rsvpForm.reset();
+  rsvpStatus.textContent = '';
+  rsvpForm.hidden = true;
+  rsvpConfirmation.hidden = false;
+  rsvpConfirmation.focus({preventScroll:true});
+  rsvpConfirmation.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
+}
+// A matching nonce and iframe source are required, plus a success response from Google Apps Script.
+// Only Google's Apps Script hosting domains may deliver a confirmation message.
+function validRSVPResponseOrigin(origin) {
+  try {
+    const host = new URL(origin).hostname;
+    return host === 'script.google.com' || host === 'script.googleusercontent.com' || host.endsWith('.script.googleusercontent.com');
+  } catch (_) { return false; }
+}
+
 if(!RSVP_SCRIPT_URL.trim()) {
   rsvpSend.disabled = true;
   rsvpSend.textContent = 'RSVP setup pending';
@@ -1939,13 +2005,13 @@ rsvpForm.addEventListener('submit', event => {
   }
   document.body.appendChild(hiddenForm);
   const handler = e => {
-    if(e.source !== rsvpTransport.contentWindow || !e.data || e.data.type !== 'ashly-elkhan-rsvp' || e.data.nonce !== nonce) return;
+    if(e.source !== rsvpTransport.contentWindow || !validRSVPResponseOrigin(e.origin) || !e.data || e.data.type !== 'ashly-elkhan-rsvp' || e.data.nonce !== nonce) return;
     window.removeEventListener('message',handler);
     clearTimeout(timeout);
     hiddenForm.remove();
     rsvpSend.disabled = false;
     rsvpSend.textContent = 'Send our reply';
-    if(e.data.ok) {rsvpStatus.textContent='Your reply has been received. Thank you for taking a moment to respond — with love, Ashly & Elkhan.';rsvpSend.textContent='Reply received';rsvpSend.disabled=true;rsvpForm.reset();}
+    if(e.data.ok === true) {showVerifiedRSVPConfirmation();rsvpSend.textContent='Reply received';rsvpSend.disabled=true;}
     else rsvpStatus.textContent='We could not confirm your RSVP. Please try again or contact the couple.';
   };
   window.addEventListener('message',handler);
