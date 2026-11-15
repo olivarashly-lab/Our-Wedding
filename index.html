@@ -1721,7 +1721,6 @@ section.content-section {padding:90px clamp(25px,7vw,90px);}
 .rsvp-confirmation .rsvp-confirmation-kicker{font:500 10px/1.8 'DM Sans',Arial,sans-serif;letter-spacing:.25em;text-transform:uppercase;color:#a37b84;margin:0 0 11px}
 .rsvp-confirmation h3{font:500 clamp(32px,6vw,43px)/1.1 'Cormorant Garamond',Georgia,serif;color:#855f6a;margin:0 auto 18px}
 .rsvp-confirmation .rsvp-confirmation-message{font:clamp(15px,2.3vw,17px)/1.85 'Libre Baskerville',Georgia,serif;color:#65534c;max-width:350px;margin:0 auto 17px}
-.rsvp-confirmation .rsvp-confirmation-signature{font:italic 25px 'Cormorant Garamond',Georgia,serif;color:#9b7580;margin:19px 0 0}
 @keyframes rsvpPaperReveal{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.rsvp-confirmation{animation:none}}
 
@@ -1791,7 +1790,6 @@ section.content-section {padding:90px clamp(25px,7vw,90px);}
       <p class="rsvp-confirmation-kicker" id="rsvpConfirmKicker">A note from us</p>
       <h3 id="rsvpConfirmTitle">With Love, We Received Your Reply</h3>
       <p class="rsvp-confirmation-message" id="rsvpConfirmMessage">Thank you for responding to our invitation. Your reply has been received.</p>
-      <p class="rsvp-confirmation-signature" id="rsvpConfirmSignature">With love, Ashly &amp; Elkhan</p>
     </div>
     <div class="rsvp-setup" id="rsvpSetup" hidden>
       <p class="rsvp-note">Online replies aren't connected yet. Please contact the couple directly.</p>
@@ -1938,8 +1936,8 @@ const rsvpTransport = document.getElementById('rsvpTransport');
 
 const rsvpConfirmation = document.getElementById('rsvpConfirmation');
 const rsvpConfirmationCopy = {
-  en: {kicker:'A note from us',title:'With Love, We Received Your Reply',message:'Thank you for responding to our invitation. Your reply has been received.',signature:'With love, Ashly & Elkhan'},
-  ru: {kicker:'От нас с любовью',title:'Мы получили ваш ответ',message:'Спасибо, что ответили на наше приглашение. Ваш ответ успешно получен.',signature:'С любовью, Эшли и Эльхан'}
+  en: {kicker:'A note from us',title:'With Love, We Received Your Reply',message:'Thank you for responding to our invitation. Your reply has been received.'},
+  ru: {kicker:'От нас с любовью',title:'Мы получили ваш ответ',message:'Спасибо, что ответили на наше приглашение. Ваш ответ успешно получен.'}
 };
 function updateRSVPConfirmationLanguage() {
   const lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
@@ -1947,7 +1945,6 @@ function updateRSVPConfirmationLanguage() {
   document.getElementById('rsvpConfirmKicker').textContent=copy.kicker;
   document.getElementById('rsvpConfirmTitle').textContent=copy.title;
   document.getElementById('rsvpConfirmMessage').textContent=copy.message;
-  document.getElementById('rsvpConfirmSignature').textContent=copy.signature;
 }
 // The EN/RU switch updates html lang; keep the confirmed receipt language in sync.
 new MutationObserver(updateRSVPConfirmationLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
