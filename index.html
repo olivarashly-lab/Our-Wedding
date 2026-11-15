@@ -1949,7 +1949,7 @@ function updateRSVPConfirmationLanguage() {
   document.getElementById('rsvpConfirmMessage').textContent=copy.message;
   document.getElementById('rsvpConfirmSignature').textContent=copy.signature;
 }
-// The EN/RU switch already updates the html lang attribute. Keep acknowledgements in sync.
+// The EN/RU switch updates html lang; keep the confirmed receipt language in sync.
 new MutationObserver(updateRSVPConfirmationLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 updateRSVPConfirmationLanguage();
 function showVerifiedRSVPConfirmation() {
@@ -1961,68 +1961,124 @@ function showVerifiedRSVPConfirmation() {
   rsvpConfirmation.focus({preventScroll:true});
   rsvpConfirmation.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
 }
-// A matching nonce and iframe source are required, plus a success response from Google Apps Script.
-// Only Google's Apps Script hosting domains may deliver a confirmation message.
+// A delivery confirmation is shown ONLY when the server reports that the
+// response was saved. Apps Script HTMLService can create a nested iframe, so
+// validate Google's origin plus the per-submission nonce rather than e.source.
+const rsvpMessages = {
+  en: {
+    pending:'Sending your reply…',
+    send:'Send our reply',
+    noName:'Please enter your name.',
+    noNote:'Please write a little note before submitting.',
+    noChoice:'Please choose whether you can attend.',
+    unavailable:'RSVP submissions are not configured. Please contact us directly.',
+    failed:'Your RSVP was not confirmed as saved. Please try again or contact us.',
+    unknown:'We could not verify delivery. Please ask us to check our RSVP list before sending again.'
+  },
+  ru: {
+    pending:'Отправляем ваш ответ…',
+    send:'Отправить ответ',
+    noName:'Пожалуйста, укажите ваше имя.',
+    noNote:'Пожалуйста, напишите нам несколько слов перед отправкой.',
+    noChoice:'Пожалуйста, сообщите, сможете ли вы прийти.',
+    unavailable:'Приём ответов пока не настроен. Пожалуйста, свяжитесь с нами напрямую.',
+    failed:'Не удалось подтвердить сохранение ответа. Попробуйте ещё раз или свяжитесь с нами.',
+    unknown:'Не удалось проверить доставку. Пожалуйста, попросите нас проверить список ответов, прежде чем отправлять снова.'
+  }
+};
+function rsvpCopy(key){
+  return rsvpMessages[document.documentElement.lang==='ru'?'ru':'en'][key];
+}
 function validRSVPResponseOrigin(origin) {
   try {
-    const host = new URL(origin).hostname;
-    return host === 'script.google.com' || host === 'script.googleusercontent.com' || host.endsWith('.script.googleusercontent.com');
+    if (origin === 'null') return false;
+    const url = new URL(origin);
+    const host = url.hostname;
+    return url.protocol === 'https:' && (
+      host === 'script.google.com' || host === 'script.googleusercontent.com' ||
+      host.endsWith('.script.googleusercontent.com') ||
+      host === 'googleusercontent.com' || host.endsWith('.googleusercontent.com')
+    );
   } catch (_) { return false; }
 }
-
 if(!RSVP_SCRIPT_URL.trim()) {
   rsvpSend.disabled = true;
-  rsvpSend.textContent = 'RSVP setup pending';
-  rsvpStatus.textContent = 'RSVP submissions are being set up. Please contact the couple directly for now.';
+  rsvpStatus.textContent = rsvpCopy('unavailable');
 }
+let rsvpSubmitting = false;
 rsvpForm.addEventListener('submit', event => {
   event.preventDefault();
-  if(!rsvpForm.reportValidity()) return;
-  const noteField = document.getElementById('rsvpNote');
-  if(!noteField.value.trim()) {
-    noteField.setCustomValidity('Please write a little note before submitting.');
-    noteField.reportValidity();
-    noteField.addEventListener('input', () => noteField.setCustomValidity(''), {once:true});
+  if(rsvpSubmitting || !RSVP_SCRIPT_URL.trim() || !rsvpConfirmation.hidden) return;
+  const nameField=document.getElementById('rsvpGuest');
+  const noteField=document.getElementById('rsvpNote');
+  const attendanceField=rsvpForm.querySelector('input[name="attendance"]:checked');
+  if(!nameField.value.trim()) {
+    nameField.setCustomValidity(rsvpCopy('noName'));
+    nameField.reportValidity();
+    nameField.addEventListener('input',()=>nameField.setCustomValidity(''),{once:true});
     return;
   }
-  if(!RSVP_SCRIPT_URL.trim()) return;
+  if(!attendanceField){
+    rsvpStatus.textContent=rsvpCopy('noChoice');
+    rsvpForm.querySelector('input[name="attendance"]').focus();
+    return;
+  }
+  if(!noteField.value.trim()){
+    noteField.setCustomValidity(rsvpCopy('noNote'));
+    noteField.reportValidity();
+    noteField.addEventListener('input',()=>noteField.setCustomValidity(''),{once:true});
+    return;
+  }
   if(document.getElementById('rsvpWebsite').value) return;
-  rsvpSend.disabled = true;
-  rsvpSend.textContent = 'Sending…';
-  rsvpStatus.textContent = 'Submitting your reply…';
-  const nonce = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
-  const payload = new FormData(rsvpForm);
-  payload.append('nonce', nonce);
-  const hiddenForm = document.createElement('form');
-  hiddenForm.method = 'POST';
-  hiddenForm.action = RSVP_SCRIPT_URL;
-  hiddenForm.target = 'rsvpTransport';
-  hiddenForm.style.display = 'none';
+  rsvpSubmitting=true;
+  rsvpSend.disabled=true;
+  rsvpSend.textContent=rsvpCopy('pending');
+  rsvpStatus.textContent=rsvpCopy('pending');
+  const nonce=(window.crypto && typeof crypto.randomUUID==='function') ? crypto.randomUUID() :
+    String(Date.now())+'-'+Math.random().toString(36).slice(2);
+  const payload=new FormData(rsvpForm);
+  payload.append('nonce',nonce);
+  const hiddenForm=document.createElement('form');
+  hiddenForm.method='POST';
+  hiddenForm.action=RSVP_SCRIPT_URL;
+  hiddenForm.target='rsvpTransport';
+  hiddenForm.style.display='none';
   for(const [name,value] of payload.entries()) {
-    const input = document.createElement('input');
+    const input=document.createElement('input');
     input.type='hidden';input.name=name;input.value=value;
     hiddenForm.appendChild(input);
   }
   document.body.appendChild(hiddenForm);
-  const handler = e => {
-    if(e.source !== rsvpTransport.contentWindow || !validRSVPResponseOrigin(e.origin) || !e.data || e.data.type !== 'ashly-elkhan-rsvp' || e.data.nonce !== nonce) return;
+  let finished=false;
+  let timeout;
+  function finish(ok,uncertain){
+    if(finished)return;
+    finished=true;
     window.removeEventListener('message',handler);
     clearTimeout(timeout);
     hiddenForm.remove();
-    rsvpSend.disabled = false;
-    rsvpSend.textContent = 'Send our reply';
-    if(e.data.ok === true) {showVerifiedRSVPConfirmation();rsvpSend.textContent='Reply received';rsvpSend.disabled=true;}
-    else rsvpStatus.textContent='We could not confirm your RSVP. Please try again or contact the couple.';
-  };
-  window.addEventListener('message',handler);
-  const timeout = setTimeout(() => {
-    window.removeEventListener('message',handler);
-    hiddenForm.remove();
+    rsvpSubmitting=false;
+    if(ok){
+      // Do not claim delivery until Apps Script explicitly confirms row saved.
+      showVerifiedRSVPConfirmation();
+      return;
+    }
     rsvpSend.disabled=false;
-    rsvpSend.textContent='Send our reply';
-    rsvpStatus.textContent='We could not confirm delivery. Please ask the couple to check the response sheet before trying again.';
-  },20000);
-  hiddenForm.submit();
+    rsvpSend.textContent=rsvpCopy('send');
+    rsvpStatus.textContent=rsvpCopy(uncertain?'unknown':'failed');
+  }
+  function handler(event){
+    if(!validRSVPResponseOrigin(event.origin))return;
+    let data=event.data;
+    if(typeof data==='string'){
+      try{data=JSON.parse(data);}catch(_){return;}
+    }
+    if(!data || data.type!=='ashly-elkhan-rsvp' || data.nonce!==nonce)return;
+    finish(data.ok===true,false);
+  }
+  window.addEventListener('message',handler);
+  timeout=setTimeout(()=>finish(false,true),25000);
+  try{hiddenForm.submit();}catch(_){finish(false,false);}
 });
 </script>
 <script id="bilingual-language-layer">
